@@ -29,5 +29,5 @@ axs[1].plot(t, y2)
 axs[1].plot(n*T, s, "ro")
 axs[1].grid()
 
-#plt.show()
-plt.savefig("aliasingFig.pdf")
+plt.show()
+#plt.savefig("aliasingFig.pdf")
