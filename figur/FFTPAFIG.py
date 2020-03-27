@@ -11,12 +11,14 @@ fourier = np.abs(fourier)
 
 freq = np.fft.fftfreq(len(fourier), d=1/rate)
 
+plt.figure()
 plt.plot(freq[5:4000], fourier[5:4000])
 plt.xlabel("Frequency [Hz]")
 plt.ylabel("Amplitude")
 plt.savefig("C4freq.pdf")
 
-#t = np.linspace(0, len(audio)/rate, len(audio))
-#plt.plot(t, audio)
-#plt.xlabel("Time [s]")
-#plt.savefig("C4audio.pdf")
+time = np.linspace(0, len(audio)/rate, len(audio))
+plt.figure()
+plt.plot(time, audio, 'r')
+plt.xlabel("Time [s]")
+plt.savefig("C4audio.pdf")
