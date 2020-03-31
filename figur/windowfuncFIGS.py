@@ -1,32 +1,9 @@
-from scipy.io.wavfile import read
-from scipy.signal import stft, boxcar
+from scipy.signal import boxcar
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib import rcParams
 from numpy.fft import fft, fftshift
 
-rcParams.update({'figure.autolayout': True})
-
-rate, audio = read("piano-C4.wav")
-
-window=['rectangular','hanning','hamming','blackman']
-
-def stftplot(window,windowlength,overlap,inputsignal):
-    for i in window:
-        f,t,Zxx = stft(inputsignal, fs=1.0, window=i, nperseg=windowlength, noverlap=windowlength*overlap, boundary='zeros')
-        plt.figure()
-        plt.pcolormesh(t, f, np.abs(Zxx), vmin=0)
-        plt.title(f'STFT Magnitude, window: {i:}')
-        plt.ylabel('Frequency [kHz]')
-        plt.xlabel('Time [sec]')
-    return f, t, Zxx
-
-# t = np.linspace(0, 20, 20001)
-# f,t,Zxx=stftplot(['rectangular'],256,0.5,audio)
-
-
-
-def windowplot(window,length):
+def windowplot(window, windowlength):
     """
     Parameters
     ----------
@@ -40,15 +17,16 @@ def windowplot(window,length):
     """
     if window == 'hanning':
         window = window.capitalize()
-        timewindow=np.hanning(length)
+        timewindow=np.hanning(windowlength)
     elif window=='hamming':
         window = window.capitalize()
-        timewindow=np.hamming(length)
+        timewindow=np.hamming(windowlength)
     elif window== 'rectangular':
         window = window.capitalize()
-        timewindow=boxcar(length)
+        timewindow=boxcar(windowlength)
     
     textsize = 14
+    
     
     plt.figure()
     plt.plot(timewindow)
@@ -56,20 +34,21 @@ def windowplot(window,length):
     plt.ylabel("Amplitude",fontsize=textsize)
     plt.xlabel("Sample",fontsize=textsize)
     plt.savefig(f'{window}Time.pdf')
+    
 
-    A = fft(timewindow, 2048) / (length/2)
+    A = fft(timewindow, 2048) / (windowlength/2)
     mag = np.abs(fftshift(A))
-    freq = np.linspace(0, 20, len(A))
+    #freq = np.linspace(-3,3, len(A)) # Værdierne på denne er der tvivl om.
     response = 20 * np.log10(mag)
     response = np.clip(response, -100, 100)
     
     plt.figure()
-    plt.plot(freq, response)
+    plt.plot(response)
     plt.title(f"Frequency response of {window} window",fontsize=textsize)
     plt.ylabel("Magnitude [dB]",fontsize=textsize)
     plt.xlabel("Normalized frequency [cycles per sample]",fontsize=textsize)
     plt.savefig(f'{window}Fourier.pdf')
-    
+
 # for i in [window[0]]:
 #       windowplot(i,21)
 
@@ -81,7 +60,7 @@ def f1(t):
 def f2(t):
     return np.sin(5*2*np.pi*t)
 
-t = np.linspace(0, 20, 20001)
+
 
 def recwindow(timeStart,timeEnd, windowStart, windowlength):
     time=np.linspace(timeStart,timeEnd,20001)
@@ -92,7 +71,8 @@ def recwindow(timeStart,timeEnd, windowStart, windowlength):
         else:
             timewindow.append(0)
     return timewindow
-   
+
+t = np.linspace(0,20,20001)
 def overlapplot (amount, overlap, windowStart, windowLength):
     """
     Note: Overlap angive i decimaltal: 0,50 = 50%. 
@@ -116,4 +96,4 @@ def overlapplot (amount, overlap, windowStart, windowLength):
     plt.ylabel('Amplitude', fontsize=16, )
     plt.savefig('overlapfigure.pdf')
     
-overlapplot(3,0.5,3,4)
+#overlapplot(2,0.5,3,4)
