@@ -7,6 +7,34 @@ rcParams.update({'figure.autolayout': True})
 
 
 def audiosignal(audiofile, info=None):
+    """
+    This function is designed to:
+    >>> Shorten an audiofile to amount of samples whithin 10 seconds if length of
+        audiofile in seconds is greater than 10 seconds
+        This is done by evaluating if amount of samples in total is greater than
+    10*samplingrate.
+    >>> Only consider the first sound channel if the audio file consist 
+        of more than one sound channel.
+
+    Parameters
+    ----------
+    audiofile : TYPE wav.file
+        DESCRIPTION: Chosen audiofile
+            
+    info : TYPE, optional, bool
+        DESCRIPTION: If True, info such as length of audiofile in seconds, in 
+                     samples, amount of samples within 10 seconds is calculated 
+                     and printed, and number of sound channnels is printed.
+                     Default: None
+                     
+    Returns
+    -------
+    samplingrate : samples per second
+        
+    audio : TYPE, array of int16
+            DESCRIPTION: Amplitude content in audiofile
+
+    """
     samplingrate,audio=read(audiofile)
     
     if info==True:
@@ -31,11 +59,23 @@ _____________________________________________________________________________
         print('Inputsignal is shortened to samples within 10 s and sound channel 1 is chosen')
     else:
         audio
-    
-
+  
     return samplingrate, audio
 
 def FourierAndtimePLOTS(inputsignal, samplingrate):
+    """
+    Plots of inputsignal in time domain and frequency domain.
+    Note: The plot of inputsignal in frequency domain is onesided
+
+    Parameters
+    ----------
+    inputsignal : TYPE array
+        DESCRIPTION: the signal to be plotted in time domain and frequency domain
+    samplingrate : TYPE int
+        DESCRIPTION: The samplingrate of inout signal
+
+    """
+    
     endpoint_of_fftplot = int(len(inputsignal)/2)
     
     fourier = np.fft.fft(inputsignal)
