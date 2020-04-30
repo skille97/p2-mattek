@@ -12,6 +12,7 @@ def audiosignal(audiofile, info=None):
     >>> Shorten an audiofile to amount of samples whithin 10 seconds if length of
         audiofile in seconds is greater than 10 seconds
         This is done by evaluating if amount of samples in total is greater than
+        if the audiofile is under 10 seconds an ValueError is raised
     10*samplingrate.
     >>> Only consider the first sound channel if the audio file consist 
         of more than one sound channel.
@@ -36,29 +37,29 @@ def audiosignal(audiofile, info=None):
 
     """
     samplingrate,audio=read(audiofile)
-    
+    clipLength = 10
     if info==True:
         print(f'''
           Input info:
           Length of input signal: {len(audio)/samplingrate:.0f} seconds
           Amount of samples in total: {len(audio):.0f} samples
-          Amount of samples within 10 sec: {10*samplingrate} samples
+          Amount of samples within 10 sec: {clipLength*samplingrate} samples
           Number of sound channels: {np.size(audio[0])}
 _____________________________________________________________________________
           ''')
-    
+
     amount_samples_total = len(audio)
-    amount_samples_10s   = 10*samplingrate
+    amount_samples = clipLength*samplingrate
     nr_channels = np.size(audio[0])
     
-    if amount_samples_total > amount_samples_10s and nr_channels == 1:
-        audio= audio[0:10*samplingrate]
-        print('Inputsignal is shortened to samples within 10 s')
-    elif amount_samples_total > amount_samples_10s and nr_channels != 1:
-        audio= audio[0:10*samplingrate:,0]
-        print('Inputsignal is shortened to samples within 10 s and sound channel 1 is chosen')
+    if amount_samples_total > amount_samples and nr_channels == 1:
+        audio= audio[0:amount_samples]
+        print(f'Inputsignal is shortened to samples within {clipLength} s')
+    elif amount_samples_total > amount_samples and nr_channels != 1:
+        audio= audio[0:amount_samples:, 0]
+        print(f'Inputsignal is shortened to samples within {clipLength} s and sound channel 1 is chosen')
     else:
-        audio
+        raise ValueError(f"{audiofile} is under {clipLength}s")
   
     return samplingrate, audio
 
@@ -136,10 +137,11 @@ def stft_of_signal(window,windowlength,overlap,inputsignal,samplerate, plot=None
     t : TYPE Array of float 64
         DESCRIPTION: Array of segment times.
             
-    Zxx : TYPE Array of complex64
+    Zxx : TYPE Array of float 64
         DESCRIPTION: STFT of windowed signal          
     """
-    f,t,Zxx = stft(inputsignal, fs=samplerate, window=window, nfft=windowlength ,nperseg=windowlength)     
+    f,t,Zxx = stft(inputsignal, fs=samplerate, window=window,
+                   nperseg=windowlength, noverlap=int(windowlength*overlap))
     
     
     if plot==True:
@@ -149,12 +151,35 @@ def stft_of_signal(window,windowlength,overlap,inputsignal,samplerate, plot=None
         plt.title(f'Spectrogram of input signal windowed with {window:} winow')
         plt.ylabel('Frequency [Hz]')
         plt.xlabel('Time [sec]')
-    return f, t, Zxx
-      
-#Liste der indeholder lydfilerne
-audiofile =("piano-C4.wav", "trumpet-C4.wav", "BandofHorses.wav", "KingsOfMetal.wav")
+        plt.show()
+    return f, t, np.abs(Zxx)
 
-rate, audio = audiosignal(audiofile[0], info=True)
+def getSTFTofFile(audiofile):
+    """
+    GENERAL
+    ----------
+    Get the Compute the Short Time Fourier Transform of the "audiofile".
 
-FourierAndtimePLOTS(audio, rate)
-f, t, Zxx = stft_of_signal('hanning',2**13,0.5,audio,rate,plot=True)
+    Parameters
+    ----------
+    audiofile : TYPE wav.file
+        DESCRIPTION: audiofile path
+
+    Returns
+    -------
+    samplingrate : samples per second
+    """
+    samplingrate, audio = audiosignal(audiofile)
+
+    _, _, Zxx = stft_of_signal('hanning', 4096, 0.5, audio, samplingrate)
+    return Zxx
+
+if __name__ == '__main__':
+    #Liste der indeholder lydfilerne
+    audiofile =("piano-C4.wav", "trumpet-C4.wav", "BandofHorses.wav", "KingsOfMetal.wav")
+    Zxx = getSTFTofFile(audiofile[2])
+    print(Zxx.shape)
+    #rate, audio = audiosignal(audiofile[2], info=True)
+
+    #FourierAndtimePLOTS(audio, rate)
+    #f, t, Zxx = stft_of_signal('hanning',2**13,0.5,audio,rate,plot=True)
