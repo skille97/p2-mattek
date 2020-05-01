@@ -21,7 +21,7 @@ def PCA(B):
         eigenAAt[:,i] = eigenAAt[:,i]/LA.norm(eigenAAt[:,i])
         
     weights = np.transpose(eigenAAt)@A
-    return weights
+    return mean, eigenAAt, weights
 
 if __name__ == '__main__':
     A = (np.zeros(shape=(2, 3)))
