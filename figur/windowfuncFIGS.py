@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from numpy.fft import fft, fftshift
 
-def windowplot(window, windowlength):
+def windowplot(window, windowlength, zeropadding_points=0):
     """
     Parameters
     ----------
@@ -13,6 +13,11 @@ def windowplot(window, windowlength):
     length : 
         TYPE: int
         DESCRIPTION: Length M-1, of time window 
+    zeropadding : 
+        TYPE: int
+        DESCRIPTION: amount of zeropadding points. zeropadding points must be less than
+                     windowlength
+                     
 
     """
     if window == 'hanning':
@@ -27,9 +32,17 @@ def windowplot(window, windowlength):
     
     textsize = 14
     
+    zeropadding = list(np.zeros(zeropadding_points+1))
+    window_points = list(np.arange(0,windowlength,1))
     
+    for i in range(len(zeropadding)+1):
+        lower = [window_points[i]-(len(zeropadding)-1) for i in range(len(zeropadding))]
+        upper = [window_points[-1]+i for i in range(len(zeropadding))]
+        x_axis = lower+ window_points+upper
+
+    timewindow = zeropadding + list(timewindow)+ zeropadding
     plt.figure()
-    plt.plot(timewindow)
+    plt.plot(x_axis, timewindow)
     plt.title(f"{window} window in time domain",fontsize=textsize)
     plt.ylabel("Amplitude",fontsize=textsize)
     plt.xlabel("Sample",fontsize=textsize)
@@ -49,8 +62,7 @@ def windowplot(window, windowlength):
     plt.xlabel("Normalized frequency [cycles per sample]",fontsize=textsize)
     plt.savefig(f'{window}Fourier.pdf')
 
-# for i in [window[0]]:
-#       windowplot(i,21)
+windowplot('rectangular', 21)
 
 # 1 Hz
 def f1(t):
