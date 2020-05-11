@@ -97,7 +97,7 @@ def FourierAndtimePLOTS(inputsignal, samplingrate):
     #plt.savefig("C4audio.pdf")
 
 
-def stft_of_signal(inputsignal, samplerate, window = 'hanning',windowlength = 2**10,overlap = 0.5, plot=None):
+def stft_of_signal(inputsignal, samplerate, window = 'hanning',windowlength = 4096,overlap = 0.5, plot=None):
     """
     GENERAL
     ----------
