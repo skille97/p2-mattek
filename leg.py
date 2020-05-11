@@ -50,5 +50,5 @@ def recognition():
 
 
 loadDatabase()
-loadTestSong("lyd/Band of Horses - The Funeral.wav", 0)
+loadTestSong("lyd/EnjoyTheSilence (optag).wav", 0)
 recognition()
