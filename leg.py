@@ -40,6 +40,8 @@ def recognition():
             scores.append(LA.norm(u - database[i]["weights"][:, j]))
         database[i]["score"] = sum(scores)/len(scores)
         print(f"{database[i]['name']} has a score of {database[i]['score']}")
+        plt.plot(scores)
+        plt.show()
 
     lowsScore = database[0]
     for song in database[1:]:
