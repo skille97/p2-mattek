@@ -21,6 +21,9 @@ def PCA(B):
     weights: TYPE float matrix p x n
         The weights of A projektet in to the eigen vektores of its covariance matrix
     """
+    for i in range(B.shape[1]):
+        B[i,:] = (B[i,:] - np.mean(B[i,:]))/np.var(B[i,:])
+
 
     # mean center the data in B
     mean = np.mean(B, axis=1)
