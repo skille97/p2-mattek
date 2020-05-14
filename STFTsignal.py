@@ -171,12 +171,12 @@ def getSTFTofFile(audiofile):
     """
     samplingrate, audio = audiosignal(audiofile)
 
-    _, _, Zxx = stft_of_signal('hanning', 2**14, 0.5, audio, samplingrate)
+    _, _, Zxx = stft_of_signal(audio, samplingrate, 'hanning', 2**14, 0.5 )
     return Zxx
 
 if __name__ == '__main__':
     #Liste der indeholder lydfilerne
-    audiofile =("piano-C4.wav", "trumpet-C4.wav", "BandofHorses.wav", "KingsOfMetal.wav")
+    audiofile =("piano-C4.wav", "trumpet-C4.wav", "lyd/Band of Horses - The Funeral.wav", "KingsOfMetal.wav")
     Zxx = getSTFTofFile(audiofile[2])
     print(Zxx.shape)
     #rate, audio = audiosignal(audiofile[2], info=True)
