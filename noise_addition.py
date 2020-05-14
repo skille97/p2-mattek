@@ -48,11 +48,6 @@ def PCA_and_SNR(audiofile, noiceRange="range(0,max(audio)*2, int(max(audio)*2/10
         if f'lyd/{recon_song}' != audiofile:
             break
     
-    
-   
-
-
-
 def recognition():
     for i in range(len(database)):
         scores = []
@@ -75,5 +70,15 @@ def recognition():
 
 
 loadDatabase()
-PCA_and_SNR(f"lyd/{name_list[0]}")
+'''
+['Band of Horses - The Funeral.wav', 
+ 'Beethoven - Fur Elise (cover).wav', 
+ 'Beethoven - Für Elise.wav', 
+ 'Coldplay - Viva La Vida.wav', 
+ 'Depeche Mode - Enjoy The Silence.wav', 
+ 'kings of metal.wav', 
+ 'L.O.C. - Undskyld.wav', 
+ 'Manowar - Kings of Metal.wav']
+'''
+PCA_and_SNR(f"lyd/{name_list[4]}")
 print(name_list)
