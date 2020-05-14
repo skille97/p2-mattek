@@ -95,6 +95,7 @@ def FourierAndtimePLOTS(inputsignal, samplingrate):
     plt.plot(time, inputsignal, 'r')
     plt.xlabel("Time [s]")
     #plt.savefig("C4audio.pdf")
+    plt.show()
 
 
 def stft_of_signal(inputsignal, samplerate, window = 'hanning',windowlength = 2**14,overlap = 0.5, plot=None):
@@ -152,7 +153,10 @@ def stft_of_signal(inputsignal, samplerate, window = 'hanning',windowlength = 2*
         plt.ylabel('Frequency [Hz]')
         plt.xlabel('Time [sec]')
         plt.show()
-    return f, t, np.abs(Zxx)
+
+    Zxx = np.abs(Zxx)
+    Zxx = Zxx[1000:]
+    return f, t, Zxx
 
 def getSTFTofFile(audiofile):
     """
@@ -171,15 +175,15 @@ def getSTFTofFile(audiofile):
     """
     samplingrate, audio = audiosignal(audiofile)
 
-    _, _, Zxx = stft_of_signal('hanning', 2**14, 0.5, audio, samplingrate)
+    _, _, Zxx = stft_of_signal(audio, samplingrate)
     return Zxx
 
 if __name__ == '__main__':
     #Liste der indeholder lydfilerne
-    audiofile =("piano-C4.wav", "trumpet-C4.wav", "BandofHorses.wav", "KingsOfMetal.wav")
-    Zxx = getSTFTofFile(audiofile[2])
-    print(Zxx.shape)
-    #rate, audio = audiosignal(audiofile[2], info=True)
+    #audiofile =("piano-C4.wav", "trumpet-C4.wav", "BandofHorses.wav", "KingsOfMetal.wav")
+    audiofile = "optagerlser/Dizzy Mizz Lizzy (optag).wav"
 
-    #FourierAndtimePLOTS(audio, rate)
-    #f, t, Zxx = stft_of_signal('hanning',2**13,0.5,audio,rate,plot=True)
+    rate, audio = audiosignal(audiofile, info=True)
+
+    f, t, Zxx = stft_of_signal(audio,rate,plot=True)
+    print(f)

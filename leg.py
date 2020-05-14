@@ -53,5 +53,5 @@ def recognition():
 
 
 loadDatabase()
-loadTestSong("optagerlser/fur elise.wav", 0)
+loadTestSong("optagerlser/coldplay(optag).wav", 0)
 recognition()
