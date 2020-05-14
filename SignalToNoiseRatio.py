@@ -2,6 +2,7 @@ import numpy as np
 from STFTsignal import audiosignal, getSTFTofFile, stft_of_signal, FourierAndtimePLOTS
 import matplotlib.pyplot as plt
 from p2PCA import PCA
+from scipy.io.wavfile import write
 
 audiofile =("lyd/Band of Horses - The Funeral.wav", "lyd/Manowar - Kings of Metal.wav")
 
@@ -9,7 +10,11 @@ def addNoise_and_STFT(audioArray, samplingrate, noice):
     noisyAudio = audioArray + np.random.randn(audioArray.size) * noice
     _, _, ZxxNoisy = stft_of_signal(noisyAudio, samplingrate)
     
-    return ZxxNoisy
+    return ZxxNoisy, noisyAudio
+#rate, audio = audiosignal(audiofile[0])
+# ZxxNoisy, noisyAudio, samplingrate = addNoise_and_STFT(audio, rate, 1000)
+# noisyAudio = np.asarray(noisyAudio, dtype=np.int16)
+# write('noisesong.wav', samplingrate, noisyAudio)
 
 def plotSNR(audiofile, noiceRange="range(0,max(audio)*2, int(max(audio)*2/100))"):
     ZxxClean = getSTFTofFile(audiofile)

@@ -5,6 +5,7 @@ import numpy as np
 from numpy import linalg as LA
 import matplotlib.pyplot as plt
 from SignalToNoiseRatio import addNoise_and_STFT
+from scipy.io.wavfile import write
 
 database = []
 testSong = {}
@@ -40,12 +41,14 @@ def PCA_and_SNR(audiofile, noiceRange="range(0,max(audio)*2, int(max(audio)*2/10
     
     for i in eval(noiceRange):
         
-        testSong["spektrogram"] = addNoise_and_STFT(audio, samplingrate, i)
+        testSong["spektrogram"], noisyAudio = addNoise_and_STFT(audio, samplingrate, i)
         testSong["name"] = audiofile
-        SNR = np.var(ZxxClean)/np.var(addNoise_and_STFT(audio, samplingrate, i))
+        SNR = np.var(ZxxClean)/np.var(addNoise_and_STFT(audio, samplingrate, i)[0])
         recon_song = recognition()
         print(f"SNR value: {SNR}")
         if f'lyd/{recon_song}' != audiofile:
+            noisyAudio = np.asarray(noisyAudio, dtype=np.int16)
+            write('noisesong.wav', samplingrate, noisyAudio)
             break
     
 def recognition():
