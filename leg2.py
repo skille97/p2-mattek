@@ -8,7 +8,7 @@ from SignalToNoiseRatio import addNoise_and_STFT
 
 database = []
 testSong = {}
-
+name_list = []
 def loadDatabase ():
     # Open a file
     path = "lyd/"
@@ -24,8 +24,8 @@ def loadDatabase ():
        _, _, Zxx = STFTsignal.stft_of_signal(audio, samplingrate)
        songdict["mean"], songdict["eigen"], songdict["weights"] = PCA(Zxx)
        songdict["name"] = file
-       database.append (songdict)
-       
+       name_list.append(file)
+       database.append(songdict)
 
 # def loadTestSong (filename, noice):
 #     samplingrate, audio = STFTsignal.audiosignal(filename)
@@ -33,17 +33,25 @@ def loadDatabase ():
     
 #     _, _, testSong["spektrogram"] = STFTsignal.stft_of_signal(audio, samplingrate)
 #     testSong["name"] = filename
-    
+
 def PCA_and_SNR(audiofile, noiceRange="range(0,max(audio)*2, int(max(audio)*2/100))"):
     ZxxClean = STFTsignal.getSTFTofFile(audiofile)
     samplingrate, audio = STFTsignal.audiosignal(audiofile)
-    testSong["spektrogram"] = addNoise_and_STFT(audio, samplingrate, 1000)
-    testSong["name"] = audiofile
+    
+    for i in eval(noiceRange):
+        
+        testSong["spektrogram"] = addNoise_and_STFT(audio, samplingrate, i)
+        testSong["name"] = audiofile
+        SNR = np.var(ZxxClean)/np.var(addNoise_and_STFT(audio, samplingrate, i))
+        recon_song = recognition()
+        print(f"SNR value: {SNR}")
+        if f'lyd/{recon_song}' != audiofile:
+            break
     
     
-    SNR = [np.var(ZxxClean)/np.var(addNoise_and_STFT(audio, samplingrate, i)) for i in eval(noiceRange)]
-    
-    return SNR
+   
+
+
 
 def recognition():
     for i in range(len(database)):
@@ -52,19 +60,20 @@ def recognition():
             u = np.transpose(database[i]["eigen"]) @ (testSong["spektrogram"][:, j] - database[i]["mean"])
             scores.append(LA.norm(u - database[i]["weights"][:, j]))
         database[i]["score"] = sum(scores)/len(scores)
-        print(f"{database[i]['name']} has a score of {database[i]['score']}")
-        plt.plot(scores)
-        plt.title(database[i]['name'])
-        plt.show()
+  #      print(f"{database[i]['name']} has a score of {database[i]['score']}")
+        # plt.plot(scores)
+        # plt.title(database[i]['name'])
+        # plt.show()
 
     lowsScore = database[0]
     for song in database[1:]:
         if lowsScore["score"] > song["score"]:
             lowsScore = song
     print("         ")
-    print(f"The song whit the lowset score is {lowsScore['name']} whit a score of {lowsScore['score']}")
+    print(f"The song with the lowset score is {lowsScore['name']} with a score of {lowsScore['score']}")
+    return lowsScore['name']
 
 
 loadDatabase()
-PCA_and_SNR("lyd/Band of Horses - The Funeral.wav")
-recognition()
+PCA_and_SNR(f"lyd/{name_list[0]}")
+print(name_list)
