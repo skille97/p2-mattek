@@ -41,6 +41,7 @@ def recognition():
         database[i]["score"] = sum(scores)/len(scores)
         print(f"{database[i]['name']} has a score of {database[i]['score']}")
         plt.plot(scores)
+        plt.title(database[i]['name'])
         plt.show()
 
     lowsScore = database[0]
@@ -52,5 +53,5 @@ def recognition():
 
 
 loadDatabase()
-loadTestSong("lyd/EnjoyTheSilence (optag).wav", 0)
+loadTestSong("optagerlser/fur elise.wav", 0)
 recognition()
