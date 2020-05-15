@@ -5,27 +5,41 @@ import matplotlib.pyplot as plt
 from matplotlib import rcParams
 rcParams.update({'figure.autolayout': True})
 
-rate, audio = read("../lyd/piano-C4.wav")
-rateT, audioT = read("../lyd/trumpet-C4.wav")
+rate, audio = read("piano-C4.wav")
 
-fourier = np.fft.fft(audio)
-fourier = np.abs(fourier)
+def FourierAndtimePLOTS(inputsignal, samplingrate):
+    """
+    Plots of inputsignal in time domain and frequency domain.
+    Note: The plot of inputsignal in frequency domain is onesided
 
-freq = np.fft.fftfreq(len(fourier), d=1/rate)
+    Parameters
+    ----------
+    inputsignal : TYPE array
+        DESCRIPTION: the signal to be plotted in time domain and frequency domain
+    samplingrate : TYPE int
+        DESCRIPTION: The samplingrate of inout signal
 
-plt.figure()
-plt.plot(freq[5:4000], fourier[5:4000])
-plt.xlabel("Frequency [Hz]")
-plt.ylabel("Amplitude")
-plt.savefig("C4freq.pdf")
+    """
+    
+    endpoint_of_fftplot = int(len(inputsignal)/2)
+    
+    fourier = np.fft.fft(inputsignal)
+    fourier = np.abs(fourier)
 
-time = np.linspace(0, len(audio)/rate, len(audio))
-plt.figure()
-plt.plot(time, audio, 'r')
-plt.xlabel("Time [s]")
-plt.savefig("C4audio.pdf")
+    freq = np.fft.fftfreq(len(fourier), d=1/samplingrate)
+    
+    plt.figure()
+    plt.plot(freq[0:endpoint_of_fftplot], fourier[0:endpoint_of_fftplot])
+    plt.xlabel("Frequency [Hz]")
+    plt.ylabel("Magnitude")
+    plt.savefig(f"C4freq.pdf")
 
-# window=['rectangular','hanning','hamming','blackman']
+    time = np.linspace(0, len(inputsignal)/samplingrate, len(inputsignal))
+    plt.figure()
+    plt.plot(time, inputsignal, 'r')
+    plt.xlabel("Time [s]")
+    plt.savefig("C4audio.pdf")
+
 
 def stftplot(window,windowlength,overlap,inputsignal,samplerate, plot=True):
     """
@@ -85,7 +99,7 @@ def stftplot(window,windowlength,overlap,inputsignal,samplerate, plot=True):
     return f, t, Zxx
 
 overlap= 0.5
-f,t,Zxx=stftplot('hanning',200,overlap,audio,rate)
-#Zxx= np.reshape(Zxx, (len(Zxx[0]),len(Zxx)))
 
-#print((time[-1])/(1/rate*200*(1-overlap))) #Sådan beregnes antal af frames
+FourierAndtimePLOTS(audio, rate)
+f,t,Zxx=stftplot('hanning',200,overlap,audio,rate)
+

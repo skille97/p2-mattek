@@ -63,39 +63,7 @@ _____________________________________________________________________________
   
     return samplingrate, audio
 
-def FourierAndtimePLOTS(inputsignal, samplingrate):
-    """
-    Plots of inputsignal in time domain and frequency domain.
-    Note: The plot of inputsignal in frequency domain is onesided
 
-    Parameters
-    ----------
-    inputsignal : TYPE array
-        DESCRIPTION: the signal to be plotted in time domain and frequency domain
-    samplingrate : TYPE int
-        DESCRIPTION: The samplingrate of inout signal
-
-    """
-    
-    endpoint_of_fftplot = int(len(inputsignal)/2)
-    
-    fourier = np.fft.fft(inputsignal)
-    fourier = np.abs(fourier)
-
-    freq = np.fft.fftfreq(len(fourier), d=1/samplingrate)
-    
-    plt.figure()
-    plt.plot(freq[0:endpoint_of_fftplot], fourier[0:endpoint_of_fftplot])
-    plt.xlabel("Frequency [Hz]")
-    plt.ylabel("Magnitude")
-    #plt.savefig(f"C4freq.pdf")
-
-    time = np.linspace(0, len(inputsignal)/samplingrate, len(inputsignal))
-    plt.figure()
-    plt.plot(time, inputsignal, 'r')
-    plt.xlabel("Time [s]")
-    #plt.savefig("C4audio.pdf")
-    plt.show()
 
 
 def stft_of_signal(inputsignal, samplerate, window = 'hanning',windowlength = 2**14,overlap = 0.5, plot=None):
