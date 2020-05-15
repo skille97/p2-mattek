@@ -1,25 +1,24 @@
-'''
-svd
-'''
+
 import numpy as np
 from numpy import linalg as LA
 
 
 def PCA(B):
     """
-    calculate the principal component analysis of B.
+    Calculates PCA of a matrix B.
     Parameters
     ----------
-    B: TYPE float m x n matrix.
-        The matrix that
+    B: TYPE float, m x n matrix
+
     Returns
     -------
-    mean: TYPE float vektorer m x 1
-        the mean of B
+    mean: TYPE float 
+            DESCRIPTION: m x 1 vector, the mean of B
+    
     eigenAAT: TYPE float matrix m x p
-        The p larges eigen vektorers of ATA
+                DESCRIPTION: The p largest eigenvectors of A^TA
     weights: TYPE float matrix p x n
-        The weights of A projektet in to the eigen vektores of its covariance matrix
+        The weights of A projected into the eigenvectors of its covariance matrix
     """
     for i in range(B.shape[1]):
         B[i,:] = (B[i,:] - np.mean(B[i,:]))/np.var(B[i,:])
