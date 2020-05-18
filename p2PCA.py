@@ -20,37 +20,27 @@ def PCA(B):
     weights: TYPE float matrix p x n
         The weights of A projected into the eigenvectors of its covariance matrix
     """
-    for i in range(B.shape[1]):
-        B[i,:] = (B[i,:] - np.mean(B[i,:]))/np.var(B[i,:])
+    for i in range(B.shape[1]): 
+        B[i,:] = (B[i,:] - np.mean(B[i,:]))/np.var(B[i,:]) #normalizing data
 
 
-    # mean center the data in B
+    # mean centers the data in B
     mean = np.mean(B, axis=1)
     A = np.zeros(shape=B.shape)
     for i in range(B.shape[1]):
         A[:, i] = B[:, i] - mean
 
+
     At = np.transpose(A)
-    AtA = At.dot(A)  # Calulaete the C tilitat matix
-    _, eigenAtA = LA.eigh(AtA)
-    eigenAtA = np.flip(eigenAtA, 1)  # reverse the orders of the eigen vektorer.
+    AtA = At.dot(A)  # Calculates ATA
+    _, eigenAtA = LA.eigh(AtA) # eigenvectors of ATA
+    eigenAtA = np.flip(eigenAtA, 1)  # reverses the orders of the eigenvectors.
 
-    eigenAAt = A.dot(eigenAtA)
+    eigenAAt = A.dot(eigenAtA) #eigen of covariance matrix
 
-    # normalize the eigen vektorer
+    # the eigenvectos are normalized
     for i in range(eigenAAt.shape[1]):
         eigenAAt[:, i] = eigenAAt[:, i] / LA.norm(eigenAAt[:, i])
 
-    weights = np.transpose(eigenAAt).dot(A)  # The weights of A projektet in to the eigen vektores of its covariance matrix
+    weights = np.transpose(eigenAAt).dot(A)  # The weights of A projected in to the eigenvectors of its covariance matrix
     return mean, eigenAAt, weights
-
-
-if __name__ == '__main__':
-    A = (np.zeros(shape=(2, 3)))
-    A[0, 0] = 2
-    A[0, 1] = 1
-    A[0, 2] = 1.1
-    A[1, 0] = 1.1
-    A[1, 1] = -1
-    A[1, 2] = -1
-    print(PCA(np.transpose(A)))

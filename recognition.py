@@ -49,9 +49,9 @@ def recognition():
         if lowsScore["score"] > song["score"]:
             lowsScore = song
     print("         ")
-    print(f"The song whit the lowset score is {lowsScore['name']} whit a score of {lowsScore['score']}")
+    print(f"The song with the lowest score is {lowsScore['name']} with a score of {lowsScore['score']}")
 
 
 loadDatabase()
-loadTestSong("optagerlser/coldplay(optag).wav", 0)
+loadTestSong("optagelser/band of horses (optag).wav", 0)
 recognition()

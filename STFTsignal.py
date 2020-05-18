@@ -6,14 +6,16 @@ from matplotlib import rcParams
 rcParams.update({'figure.autolayout': True})
 
 
-def audiosignal(audiofile, info=None):
+def audiosignal(audiofile, info=None, clipLength = 10):
     """
     This function is designed to:
     >>> Shorten an audiofile to amount of samples whithin 10 seconds if length of
-        audiofile in seconds is greater than 10 seconds
-        This is done by evaluating if amount of samples in total is greater than
-        if the audiofile is under 10 seconds an ValueError is raised
-    10*samplingrate.
+        audiofile in seconds is greater than clipLength.
+        This is done by evaluating if amount of samples in total is greater than 
+        clipLength*samplingrate.
+        
+        if the audiofile is under clipLength an ValueError is raised
+
     >>> Only consider the first sound channel if the audio file consist 
         of more than one sound channel.
 
@@ -28,6 +30,9 @@ def audiosignal(audiofile, info=None):
                      and printed, and number of sound channnels is printed.
                      Default: None
                      
+    cliplength : TYPE int
+        DESCRIPTION: length of the audio signal in seconds
+                     
     Returns
     -------
     samplingrate : samples per second
@@ -36,9 +41,8 @@ def audiosignal(audiofile, info=None):
             DESCRIPTION: Amplitude content in audiofile
 
     """
-    samplingrate,audio=read(audiofile)
-    clipLength = 10
-    if info==True:
+    samplingrate,audio=read(audiofile) #read .wav file
+    if info==True: 
         print(f'''
           Input info:
           Length of input signal: {len(audio)/samplingrate:.0f} seconds
@@ -49,17 +53,17 @@ _____________________________________________________________________________
           ''')
 
     amount_samples_total = len(audio)
-    amount_samples = clipLength*samplingrate
-    nr_channels = np.size(audio[0])
+    amount_samples = clipLength*samplingrate #Amount of samples in clipLength
+    nr_channels = np.size(audio[0]) # amount of channels
     
     if amount_samples_total > amount_samples and nr_channels == 1:
         audio= audio[0:amount_samples]
         print(f'Inputsignal is shortened to samples within {clipLength} s')
     elif amount_samples_total > amount_samples and nr_channels != 1:
-        audio= audio[0:amount_samples:, 0]
+        audio= audio[0:amount_samples:, 0] #choose sound channel 1
         print(f'Inputsignal is shortened to samples within {clipLength} s and sound channel 1 is chosen')
     else:
-        raise ValueError(f"{audiofile} is under {clipLength}s")
+        raise ValueError(f"{audiofile} is under {clipLength} s")
   
     return samplingrate, audio
 
@@ -70,7 +74,7 @@ def stft_of_signal(inputsignal, samplerate, window = 'hanning',windowlength = 2*
     """
     GENERAL
     ----------
-    This function takes an input signal and plots a spectrogram of windowed signal.
+    STFT of inputsignal
     The function uses the function stft from scipy.signal.
     
     
@@ -82,7 +86,7 @@ def stft_of_signal(inputsignal, samplerate, window = 'hanning',windowlength = 2*
                
     windowlength : TYPE int
         DESCRIPTION: Length of each frame
-                     Defaults to: 256
+                     Defaults to: 2**14
             
     overlap : TYPE: float, int
         DESCRIPTION: Percentwise overlap from frame to frame
@@ -117,20 +121,20 @@ def stft_of_signal(inputsignal, samplerate, window = 'hanning',windowlength = 2*
         plt.figure()
         plt.pcolormesh(t, f, np.abs(Zxx), vmin=0)
         plt.colorbar()
-        plt.title(f'Spectrogram of input signal windowed with {window:} winow')
+        plt.title(f'Spectrogram of input signal windowed with {window:} window')
         plt.ylabel('Frequency [Hz]')
         plt.xlabel('Time [sec]')
         plt.show()
 
-    Zxx = np.abs(Zxx)
-    Zxx = Zxx[1000:]
+    Zxx = np.abs(Zxx) 
+    Zxx = Zxx[1000:] # Frequencies below are removed
     return f, t, Zxx
 
 def getSTFTofFile(audiofile):
     """
     GENERAL
     ----------
-    Get the Compute the Short Time Fourier Transform of the "audiofile".
+    Computes the Short Time Fourier Transform of the "audiofile".
 
     Parameters
     ----------
@@ -139,7 +143,7 @@ def getSTFTofFile(audiofile):
 
     Returns
     -------
-    samplingrate : samples per second
+    Zxx: STFT of file
     """
     samplingrate, audio = audiosignal(audiofile)
 
@@ -149,11 +153,10 @@ def getSTFTofFile(audiofile):
 if __name__ == '__main__':
     #Liste der indeholder lydfilerne
     audiofile =("piano-C4.wav", "trumpet-C4.wav", "lyd/Band of Horses - The Funeral.wav", "KingsOfMetal.wav")
+    
     Zxx = getSTFTofFile(audiofile[2])
     print(Zxx.shape)
-    #rate, audio = audiosignal(audiofile[2], info=True)
-
-    rate, audio = audiosignal(audiofile, info=True)
+    
+    rate, audio = audiosignal(audiofile[2], info=True)
 
     f, t, Zxx = stft_of_signal(audio,rate,plot=True)
-    print(f)
