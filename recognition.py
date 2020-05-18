@@ -51,7 +51,7 @@ def recognition():
     print("         ")
     print(f"The song with the lowest score is {lowsScore['name']} with a score of {lowsScore['score']}")
 
-
-loadDatabase()
-loadTestSong("optagelser/band of horses (optag).wav", 0)
-recognition()
+if __name__ == '__main__':
+    loadDatabase()
+    loadTestSong("optagelser/band of horses (optag).wav", 0)
+    recognition()
