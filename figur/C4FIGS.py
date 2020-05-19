@@ -7,7 +7,7 @@ rcParams.update({'figure.autolayout': True})
 
 rate, audio = read("piano-C4.wav")
 
-def FourierAndtimePLOTS(inputsignal, samplingrate):
+def FourierAndtimePLOTS(inputsignal, samplingrate, noise):
     """
     Plots of inputsignal in time domain and frequency domain.
     Note: The plot of inputsignal in frequency domain is onesided
@@ -20,7 +20,7 @@ def FourierAndtimePLOTS(inputsignal, samplingrate):
         DESCRIPTION: The samplingrate of inout signal
 
     """
-    
+    inputsignal = inputsignal + np.random.randn(inputsignal.size) * noise
     endpoint_of_fftplot = int(len(inputsignal)/2)
     
     fourier = np.fft.fft(inputsignal)
@@ -36,7 +36,7 @@ def FourierAndtimePLOTS(inputsignal, samplingrate):
 
     time = np.linspace(0, len(inputsignal)/samplingrate, len(inputsignal))
     plt.figure()
-    plt.plot(time, inputsignal, 'r')
+    plt.plot(time, inputsignal)
     plt.xlabel("Time [s]")
     plt.savefig("C4audio.pdf")
 
@@ -98,8 +98,10 @@ def stftplot(window,windowlength,overlap,inputsignal,samplerate, plot=True):
         plt.savefig(f'spectrogramC4{window}.jpg', dpi=150)
     return f, t, Zxx
 
-overlap= 0.5
 
-FourierAndtimePLOTS(audio, rate)
-f,t,Zxx=stftplot('hanning',200,overlap,audio,rate)
+
+if __name__ == '__main__':
+    overlap= 0.5
+    FourierAndtimePLOTS(audio, rate, 0)
+    f,t,Zxx=stftplot('hanning',200,overlap,audio,rate)
 

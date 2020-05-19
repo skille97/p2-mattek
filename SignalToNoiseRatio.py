@@ -27,7 +27,12 @@ def addNoise_and_STFT(audioArray, samplingrate, noise):
     
     return ZxxNoisy, noisyAudio
 
-def plotSNR(audiofile, noiseRange="range(0,max(audio)*2, int(max(audio)*2/100))"):
+def power (signalArray):
+    power = 1/(len(signalArray))*sum(signalArray**2)
+    return power
+
+
+def plotSNR(audiofile, noiseRange="range(0,int(max(audio)*2), int(max(audio)*2/100))"):
     """
     Plot of SNR as a function of variated noise added to audiofile. 
     
@@ -36,7 +41,7 @@ def plotSNR(audiofile, noiseRange="range(0,max(audio)*2, int(max(audio)*2/100))"
     audiofile : TYPE .wav file
     noiseRange : TYPE, optional, str
         DESCRIPTION:  range of added noise
-        The default is "range(0,max(audio)*2, int(max(audio)*2/100))".
+        The default is "range(0,int(max(audio)*2), int(max(audio)*2/100))".
 
     Returns
     -------
@@ -45,11 +50,10 @@ def plotSNR(audiofile, noiseRange="range(0,max(audio)*2, int(max(audio)*2/100))"
     """
     ZxxClean = getSTFTofFile(audiofile)
     samplingrate, audio = audiosignal(audiofile)
-    
-    
+    audio = audio + np.random.randn(audio.size) * 0
     #noise is added in noiseRange
-    SNR = [np.var(ZxxClean)/np.var(addNoise_and_STFT(audio, samplingrate, i)[0]) for i in eval(noiseRange)]
-
+    SNR = [power(audio)/power(addNoise_and_STFT(audio, samplingrate, i)[1]) for i in eval(noiseRange)]
+    
     plt.figure()
     plt.grid()
     plt.semilogx(20*np.log(SNR))
@@ -58,5 +62,6 @@ def plotSNR(audiofile, noiseRange="range(0,max(audio)*2, int(max(audio)*2/100))"
     
     return SNR
 
+
 if __name__ == '__main__':
-    SNR = plotSNR(audiofile[1])
+   plotSNR(audiofile[1])
