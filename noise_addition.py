@@ -4,7 +4,7 @@ from scipy.io.wavfile import write
 import numpy as np
 from recognition import recognition, loadDatabase
       
-def PCA_and_SNR(audiofile, noiseRange="range(0,int(max(audio)*2), int(max(audio)*2/100))"):
+def PCA_and_SNR(filename, audiofile, noiseRange="range(0,int(max(audio)*2), int(max(audio)*2/1000))"):
     """
     Noise is added until the audiofile can not be recognised anymore by algorithm.
     When the audiofile is not recognised anymore, an .wav file is created with the
@@ -16,7 +16,7 @@ def PCA_and_SNR(audiofile, noiseRange="range(0,int(max(audio)*2), int(max(audio)
 
     noiseRange : TYPE, optional, str
         DESCRIPTION:  range of added noise
-        The default is "range(0,int(max(audio)), int(max(audio)/100))".
+        The default is "range(0,int(max(audio)), int(max(audio)/1000))".
     
     Returns
     -------
@@ -43,7 +43,7 @@ Actual song: {audiofile}
 SNR (%): {prevSNR*100:0.4}
                   """)
             noisyAudio = np.asarray(noisyAudio, dtype=np.int16)
-            write('noisesong.wav', samplingrate, noisyAudio)
+            write(f'(noise) {filename}', samplingrate, noisyAudio)
             break
 
 if __name__ == '__main__':
@@ -51,4 +51,4 @@ if __name__ == '__main__':
     path = 'lyd/'
     database = loadDatabase()
     for i in database:
-        PCA_and_SNR(path + i["name"])
+        PCA_and_SNR(i["name"], path + i["name"])
