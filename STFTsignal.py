@@ -152,7 +152,7 @@ def getSTFTofFile(audiofile):
 
 if __name__ == '__main__':
     #Liste der indeholder lydfilerne
-    audiofile =("piano-C4.wav", "trumpet-C4.wav", "lyd/Band of Horses - The Funeral.wav", "KingsOfMetal.wav")
+    audiofile =("figur/piano-C4.wav", "figur/trumpet-C4.wav", "lyd/Band of Horses - The Funeral.wav", "lyd/Manowar - Kings of Metal.wav")
     
     Zxx = getSTFTofFile(audiofile[2])
     print(Zxx.shape)

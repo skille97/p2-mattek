@@ -48,7 +48,6 @@ def plotSNR(audiofile, noiseRange="range(0,int(max(audio)*2), int(max(audio)*2/1
     SNR : TYPE array of SNR values
 
     """
-    ZxxClean = getSTFTofFile(audiofile)
     samplingrate, audio = audiosignal(audiofile)
     audio = audio + np.random.randn(audio.size) * 0
     #noise is added in noiseRange
