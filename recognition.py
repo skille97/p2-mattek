@@ -51,7 +51,7 @@ def loadTestSong (filename):
     testSong["name"] = filename
     return testSong
 
-def recognition(database, testSong, plot=True, info=True):
+def recognition(database, testSong, plot=True, info=True, latextable=False):
     """
     An average score is calculated for every song in database with respect to testsong
     and the most alike song from database is printed
@@ -66,6 +66,16 @@ def recognition(database, testSong, plot=True, info=True):
                      The default is True.
     """
     #Score for every song in database with respect to testsong
+    
+    if latextable == True:
+        print(testSong["name"])
+        print("""\\begin{table}[H]
+    \centering
+    \\begin{tabular}{|l|l|}
+    \hline
+    Artist and Title & Score value\\\\
+    \hline
+          """)
     for i in range(len(database)):
         scores = []
         for j in range(testSong["spectrogram"].shape[1]): #every frame of STFT
@@ -74,10 +84,13 @@ def recognition(database, testSong, plot=True, info=True):
             scores.append(LA.norm(u - database[i]["weights"][:, j]))
         #mean value of the scores
         database[i]["score"] = sum(scores)/len(scores)
-        if plot == True:
+        if latextable == True:
+                print(f'{database[i]["name"]} & {database[i]["score"]:0.7} \\\\')
+        if info == True and latextable != True:
             print(f"{database[i]['name']} has a score of {database[i]['score']}")
+        if plot == True:
             plt.plot(scores)
-            plt.title(database[i]['name'])
+            plt.title(f"{database[i]['name'].split('.w')[0]}\n testsong: {testSong['name'].split('/')[1].split('(o')[0]}")
             plt.show()
 
     #The lowest score is found and is the most alike to testSong
@@ -85,12 +98,32 @@ def recognition(database, testSong, plot=True, info=True):
     for song in database[1:]:
         if lowsScore["score"] > song["score"]:
             lowsScore = song
-    if info == True:        
+    if info == True and latextable != True:        
         print("         ")
         print(f"The song with the lowest score is {lowsScore['name']} with a score of {lowsScore['score']}")
-    return lowsScore['name']
+    
+    if latextable == True:
+        print("""\hline
+\end{tabular}
+\caption{Recognition of a recorded version of """ + testSong["name"] + """ and the coherent score value.}
+\label{tab:  }
+\end{table}""")
+        print("         ")
+    return lowsScore['name'], lowsScore['score']
 
 if __name__ == '__main__':
+    path = "optagelser/"
+    
+    audiofiles = ("""band of horses (optag).wav
+Dizzy Mizz Lizzy (optag).wav
+enjoy the silence (optag) com.wav
+fur elise (optag) com.wav
+kings of metal (optag) com.wav
+LOC Undskyld(optag).wav
+paradise (optag) com.wav
+Viva La Vida (optag).wav""").split('\n')
+
     database = loadDatabase()
-    testSong = loadTestSong("optagelser/band of horses (optag).wav")
-    recognition(database, testSong)
+    for i in audiofiles:
+        testSong = loadTestSong(path + i)
+        recognition(database, testSong, info=True, plot=True, latextable=None)

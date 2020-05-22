@@ -85,12 +85,27 @@ def recwindow(timeStart,timeEnd, windowStart, windowlength):
     return timewindow
 
 t = np.linspace(0,20,20001)
-def overlapplot (amount, overlap, windowStart, windowLength):
+def overlapplot (amount=3, overlap=0.5, windowStart=3, windowLength=4):
     """
-    Note: Overlap angive i decimaltal: 0,50 = 50%. 
-    Dog skal overlap stadig kunne være af typen int.
+    Reproduction of the overlapfigure from project
+    
+    Parameters
+    ----------
+    amount : TYPE int 
+        DESCRIPTION Number of windowed plots
+        
+    overlap : TYPE float
+        DESCRIPTION In percent, if overlap = 1, no overlap
+    windowStart : TYPE int
+        DESCRIPTION. start of the first framed plot
+        
+    windowLength : TYPE int
+        DESCRIPTION. windowlength
     """
-    overlap=int(windowLength*overlap)
+    try: 
+        overlap=int(windowLength*overlap)
+    except: 
+        raise ValueError(f'windowlength*overlap must be an int')
     f1end=8000
     f2start=8000
     #Whole signal
@@ -108,4 +123,4 @@ def overlapplot (amount, overlap, windowStart, windowLength):
     plt.ylabel('Amplitude', fontsize=16, )
     plt.savefig('overlapfigure.pdf')
     
-#overlapplot(2,0.5,3,4)
+overlapplot()

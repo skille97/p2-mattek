@@ -18,6 +18,7 @@ def FourierAndtimePLOTS(inputsignal, samplingrate, noise):
         DESCRIPTION: the signal to be plotted in time domain and frequency domain
     samplingrate : TYPE int
         DESCRIPTION: The samplingrate of inout signal
+    noise : variance of gaussian noise with mean=0
 
     """
     inputsignal = inputsignal + np.random.randn(inputsignal.size) * noise
@@ -38,10 +39,11 @@ def FourierAndtimePLOTS(inputsignal, samplingrate, noise):
     plt.figure()
     plt.plot(time, inputsignal)
     plt.xlabel("Time [s]")
+    plt.title(f'C4tone, gaussian noise: {noise}')
     plt.savefig("C4audio.pdf")
 
 
-def stftplot(window,windowlength,overlap,inputsignal,samplerate, plot=True):
+def stftplot(window,windowlength,overlap,inputsignal,samplerate, noise, plot=True):
     """
     GENERAL
     ----------
@@ -68,12 +70,15 @@ def stftplot(window,windowlength,overlap,inputsignal,samplerate, plot=True):
             
     samplerate : TYPE float, int
         DESCRIPTION: samples per second
+        
     
     plot :TYPE bool
         DESCRIPTION: When True, a spectrogram of winodwed 
                      inputsignal is plotted. 
                      Default: True
-
+                     
+    noise : variance of gaussian noise with mean=0
+    
     Returns
     -------
     f : TYPE Array of float 64
@@ -85,14 +90,14 @@ def stftplot(window,windowlength,overlap,inputsignal,samplerate, plot=True):
     Zxx : TYPE Array of complex64
         DESCRIPTION: STFT of windowed signal          
     """
-    
+    inputsignal = inputsignal + np.random.randn(inputsignal.size)*noise
     f,t,Zxx = stft(inputsignal, fs=samplerate, window=window, nfft=windowlength ,nperseg=windowlength, noverlap=windowlength*overlap)     
     
     if plot==True:    
         plt.figure()
         plt.pcolormesh(t, f, np.abs(Zxx), vmin=0,)
         plt.colorbar()
-        plt.title(f'STFT Magnitude, window: {window:}')
+        plt.title(f'STFT Magnitude, window: {window:}, noise: {noise}')
         plt.ylabel('Frequency [Hz]')
         plt.xlabel('Time [sec]')
         plt.savefig(f'spectrogramC4{window}.jpg', dpi=150)
@@ -103,5 +108,6 @@ def stftplot(window,windowlength,overlap,inputsignal,samplerate, plot=True):
 if __name__ == '__main__':
     overlap= 0.5
     FourierAndtimePLOTS(audio, rate, 0)
-    f,t,Zxx=stftplot('hanning',200,overlap,audio,rate)
-
+    FourierAndtimePLOTS(audio, rate, 1000)
+    f,t,Zxx=stftplot('hanning',200,overlap,audio,rate, 0)
+    f,t,Zxx=stftplot('hanning',200,overlap,audio,rate, 1000)
